@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>~/davi-canuto</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="terminal">
+    <label for="lang"><span class="prompt">🌐</span></label>
+    <select id="lang">
+      <option value="en" selected>🇺🇸 English</option>
+      <option value="pt">🇧🇷 Português</option>
+    </select>
+    <div id="output" class="output"></div>
+    <div class="input-line">
+      <span class="prompt">$</span>
+      <input type="text" id="command" autocomplete="off" autofocus />
+    </div>
+  </div>
+
+  <script>
+    const fs = {
+      en: {
+        '/': ['about.txt', 'skills.txt', 'projects', 'contact.txt'],
+        '/projects': ['school-api.txt', 'booking-system.txt'],
+        'about.txt': "Hello! I'm Davi Canuto, a backend developer focused on REST APIs, Ruby on Rails, and testing.",
+        'skills.txt': "Ruby, Rails, PostgreSQL, Docker, TDD, CI/CD",
+        'contact.txt': "Email: davialessandro33@gmail.com\nLinkedIn: https://linkedin.com/in/davi-canuto-b10ab11b7",
+        'projects/school-api.txt': "School API: RESTful API for managing school data. GitHub: https://github.com/seuusuario/api-escolar",
+        'projects/booking-system.txt': "Booking System: Platform for resource reservations. GitHub: https://github.com/seuusuario/reservas"
+      },
+      pt: {
+        '/': ['sobre.txt', 'habilidades.txt', 'projetos', 'contato.txt'],
+        '/projetos': ['api-escolar.txt', 'sistema-reservas.txt'],
+        'sobre.txt': "Olá! Eu sou Davi Canuto, desenvolvedor backend focado em APIs REST, Ruby on Rails e testes.",
+        'habilidades.txt': "Ruby, Rails, PostgreSQL, Docker, TDD, CI/CD",
+        'contato.txt': "Email: davialessandro33@gmail.com\nLinkedIn: https://linkedin.com/in/davi-canuto-b10ab11b7",
+        'projetos/api-escolar.txt': "API Escolar: API RESTful para gerenciamento escolar. GitHub: https://github.com/seuusuario/api-escolar",
+        'projetos/sistema-reservas.txt': "Sistema de Reservas: Plataforma de reservas de recursos. GitHub: https://github.com/seuusuario/reservas"
+      }
+    };
+
+    let lang = 'en';
+    let cwd = '/';
+
+    const output = document.getElementById('output');
+    const input = document.getElementById('command');
+    const langSelect = document.getElementById('lang');
+
+    function print(text = '') {
+      output.innerHTML += text + '\n';
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clear() {
+      output.innerHTML = '';
+    }
+
+    function handleCommand(cmd) {
+      const parts = cmd.trim().split(' ');
+      const base = parts[0];
+      const args = parts.slice(1);
+      const currentFS = fs[lang];
+
+      switch (base) {
+        case 'ls':
+          print((currentFS[cwd] || []).join('\n'));
+          break;
+        case 'cd':
+          if (args.length === 0) {
+            cwd = '/';
+          } else {
+            const target = cwd === '/' ? `/${args[0]}` : `${cwd}/${args[0]}`;
+            if (currentFS[target]) {
+              cwd = target;
+            } else {
+              if (lang === 'en') {
+                print('No such directory');
+              } else {
+                print('Diretório não encontrado');
+              }
+            }
+          }
+          break;
+        case 'cat':
+          const path = cwd === '/' ? args[0] : `${cwd}/${args[0]}`;
+          const content = currentFS[path];
+          if (content) {
+            print(content);
+          } else {
+            if (lang === 'en') {
+              print('File not found');
+            } else {
+              print('Arquivo não encontrado');
+            }
+          }
+          break;
+        case 'clear':
+          clear();
+          break;
+        case 'help':
+          if (lang === 'en') {
+            print('Available commands: \nls\ncd >dir<\ncat >dir.txt<\nclear\nhelp');
+          } else {
+            print('Comandos disponíveis: \nls\ncd dir.txt\ncat dir.txt\nclear\nhelp');
+          }
+            break;
+        default:
+          if (lang === 'en') {
+            print('Command not found');
+          } else {
+            print('Comando não encontrado');
+          }
+      }
+    }
+
+   document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        const command = input.value;
+        input.value = '';
+        if (command) {
+          print(`$ ${command}`);
+          handleCommand(command);
+        }
+      }
+    });
+
+    langSelect.addEventListener('change', function () {
+      lang = this.value;
+      cwd = '/';
+      clear();
+      if (lang === 'en') {
+        print('Language switched to English.');
+      } else {
+        print('Idioma alterado para Português.');
+      }
+    });
+  </script>
+</body>
+</html>
