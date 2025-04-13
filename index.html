@@ -25,20 +25,20 @@
       en: {
         '/': ['about.txt', 'skills.txt', 'projects', 'contact.txt'],
         '/projects': ['school-api.txt', 'booking-system.txt'],
-        'about.txt': "Hello! I'm Davi Canuto, a backend developer focused on REST APIs, Ruby on Rails, and testing.",
-        'skills.txt': "Ruby, Rails, PostgreSQL, Docker, TDD, CI/CD",
-        'contact.txt': "Email: davialessandro33@gmail.com\nLinkedIn: https://linkedin.com/in/davi-canuto-b10ab11b7",
-        'projects/school-api.txt': "School API: RESTful API for managing school data. GitHub: https://github.com/seuusuario/api-escolar",
-        'projects/booking-system.txt': "Booking System: Platform for resource reservations. GitHub: https://github.com/seuusuario/reservas"
+        '/about.txt': "Hello! I'm Davi Canuto, a backend developer focused on REST APIs, Ruby on Rails, and testing.",
+        '/skills.txt': "Ruby, Rails, PostgreSQL, Docker, TDD, CI/CD",
+        '/contact.txt': "Email: davialessandro33@gmail.com\nLinkedIn: https://linkedin.com/in/davi-canuto-b10ab11b7",
+        '/projects/school-api.txt': "School API: RESTful API for managing school data. GitHub: https://github.com/seuusuario/api-escolar",
+        '/projects/booking-system.txt': "Booking System: Platform for resource reservations. GitHub: https://github.com/seuusuario/reservas",
       },
       pt: {
         '/': ['sobre.txt', 'habilidades.txt', 'projetos', 'contato.txt'],
         '/projetos': ['api-escolar.txt', 'sistema-reservas.txt'],
-        'sobre.txt': "Olá! Eu sou Davi Canuto, desenvolvedor backend focado em APIs REST, Ruby on Rails e testes.",
-        'habilidades.txt': "Ruby, Rails, PostgreSQL, Docker, TDD, CI/CD",
-        'contato.txt': "Email: davialessandro33@gmail.com\nLinkedIn: https://linkedin.com/in/davi-canuto-b10ab11b7",
-        'projetos/api-escolar.txt': "API Escolar: API RESTful para gerenciamento escolar. GitHub: https://github.com/seuusuario/api-escolar",
-        'projetos/sistema-reservas.txt': "Sistema de Reservas: Plataforma de reservas de recursos. GitHub: https://github.com/seuusuario/reservas"
+        '/sobre.txt': "Olá! Eu sou Davi Canuto, desenvolvedor backend focado em APIs REST, Ruby on Rails e testes.",
+        '/habilidades.txt': "Ruby, Rails, PostgreSQL, Docker, TDD, CI/CD",
+        '/contato.txt': "Email: davialessandro33@gmail.com\nLinkedIn: https://linkedin.com/in/davi-canuto-b10ab11b7",
+        '/projetos/api-escolar.txt': "API Escolar: API RESTful para gerenciamento escolar. GitHub: https://github.com/seuusuario/api-escolar",
+        '/projetos/sistema-reservas.txt': "Sistema de Reservas: Plataforma de reservas de recursos. GitHub: https://github.com/seuusuario/reservas"
       }
     };
 
@@ -71,30 +71,35 @@
         case 'cd':
           if (args.length === 0) {
             cwd = '/';
+          } else if (args[0] === '..') {
+            if (cwd !== '/') {
+              const parts = cwd.split('/');
+              parts.pop();
+              cwd = parts.length === 1 ? '/' : parts.join('/');
+            }
+          } else if (args[0] === '.') {
           } else {
             const target = cwd === '/' ? `/${args[0]}` : `${cwd}/${args[0]}`;
             if (currentFS[target]) {
               cwd = target;
             } else {
-              if (lang === 'en') {
-                print('No such directory');
-              } else {
-                print('Diretório não encontrado');
-              }
+              print(lang === 'en' ? 'No such directory' : 'Diretório não encontrado');
             }
           }
           break;
         case 'cat':
-          const path = cwd === '/' ? args[0] : `${cwd}/${args[0]}`;
+          const target = args[0];
+          if (!target) {
+            print(lang === 'en' ? 'Missing file name' : 'Nome do arquivo ausente');
+            break;
+          }
+
+          const path = cwd === '/' ? target : `${cwd}/${target}`;
           const content = currentFS[path];
           if (content) {
             print(content);
           } else {
-            if (lang === 'en') {
-              print('File not found');
-            } else {
-              print('Arquivo não encontrado');
-            }
+            print(lang === 'en' ? 'File not found' : 'Arquivo não encontrado');
           }
           break;
         case 'clear':
@@ -113,7 +118,6 @@
             const fullPath = cwd === '/' ? item : `${cwd}/${item}`;
             const content = fs[lang][fullPath];
             if (Array.isArray(fs[lang][`/${item.replace('.txt', '')}`])) {
-              // Se for uma "pasta" (ex: projects), mostrar o conteúdo
               const subdir = `/${item.replace('.txt', '')}`;
               print(`\n📁 ${item}`);
               for (const subfile of fs[lang][subdir]) {
@@ -122,7 +126,6 @@
                 print(fs[lang][subpath]);
               }
             } else {
-              // Se for um arquivo
               print(`\n📄 ${item}`);
               print(content);
             }
@@ -137,31 +140,77 @@
       }
     }
 
-   document.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-        const command = input.value;
-        input.value = '';
-        if (command) {
-          print(`$ ${command}`);
-          handleCommand(command);
+    const commandHistory = [];
+    let historyIndex = -1;
+    const commands = ['ls', 'cd', 'cat', 'clear', 'help', 'show'];
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+          const command = input.value;
+          input.value = '';
+          if (command) {
+            print(`$ ${command}`);
+            handleCommand(command);
+            commandHistory.push(command);
+            historyIndex = commandHistory.length;
+          }
+          input.value = '';
+        } else if (event.key === 'ArrowUp') {
+          if (historyIndex > 0) {
+            historyIndex--;
+            input.value = commandHistory[historyIndex];
+          }
+          event.preventDefault();
+        } else if (event.key === 'ArrowDown') {
+          if (historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            input.value = commandHistory[historyIndex];
+          } else {
+            historyIndex = commandHistory.length;
+            input.value = '';
+          }
+          event.preventDefault();
+        } else if (event.key === 'Tab') {
+          event.preventDefault();
+          const value = input.value.trim();
+          const parts = value.split(' ');
+          const base = parts[0];
+          const arg = parts[1] || '';
+          const currentFS = fs[lang];
+
+          if (parts.length === 1) {
+            const matches = commands.filter(cmd => cmd.startsWith(base));
+            if (matches.length === 1) {
+              input.value = matches[0] + ' ';
+            } else if (matches.length > 1) {
+              print(matches.join('    '));
+            }
+          } else if (base === 'cd' || base === 'cat') {
+            const items = currentFS[cwd] || [];
+            const matches = items.filter(item => item.startsWith(arg));
+            if (matches.length === 1) {
+              input.value = `${base} ${matches[0]}`;
+            } else if (matches.length > 1) {
+              print(matches.join('    '));
+            }
+          }
         }
-      }
-    });
+      });
 
-    langSelect.addEventListener('change', function () {
-      lang = this.value;
-      cwd = '/';
-      clear();
-      if (lang === 'en') {
-        print('Language switched to English.');
-      } else {
-        print('Idioma alterado para Português.');
-      }
-    });
+      langSelect.addEventListener('change', function () {
+        lang = this.value;
+        cwd = '/';
+        clear();
+        if (lang === 'en') {
+          print('Language switched to English.');
+        } else {
+          print('Idioma alterado para Português.');
+        }
+      });
 
-    print('Welcome to Davi Canuto\'s interactive terminal portfolio!');
-    print('Type `help` to see available commands.');
-    print('Type `show` to see all content at once.\n');
+      print('Welcome to Davi Canuto\'s interactive terminal portfolio!');
+      print('Type `help` to see available commands.');
+      print('Type `show` to see all content at once.\n');
   </script>
 </body>
 </html>
