@@ -107,6 +107,27 @@
             print('Comandos disponíveis: \nls\ncd dir.txt\ncat dir.txt\nclear\nhelp');
           }
             break;
+        case 'show':
+          const fullPaths = fs[lang]['/'];
+          for (const item of fullPaths) {
+            const fullPath = cwd === '/' ? item : `${cwd}/${item}`;
+            const content = fs[lang][fullPath];
+            if (Array.isArray(fs[lang][`/${item.replace('.txt', '')}`])) {
+              // Se for uma "pasta" (ex: projects), mostrar o conteúdo
+              const subdir = `/${item.replace('.txt', '')}`;
+              print(`\n📁 ${item}`);
+              for (const subfile of fs[lang][subdir]) {
+                const subpath = `${subdir}/${subfile}`;
+                print(`\n📄 ${subfile}`);
+                print(fs[lang][subpath]);
+              }
+            } else {
+              // Se for um arquivo
+              print(`\n📄 ${item}`);
+              print(content);
+            }
+          }
+          break;
         default:
           if (lang === 'en') {
             print('Command not found');
@@ -137,6 +158,10 @@
         print('Idioma alterado para Português.');
       }
     });
+
+    print('Welcome to Davi Canuto\'s interactive terminal portfolio!');
+    print('Type `help` to see available commands.');
+    print('Type `show` to see all content at once.\n');
   </script>
 </body>
 </html>
