@@ -43,3 +43,22 @@ select {
   border: 1px solid #555;
   margin-bottom: 1rem;
 }
+
+.button-panel {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.terminal-button {
+  background-color: #333;
+  border: 1px solid #555;
+  color: #d4d4d4;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  font-family: monospace;
+}
+
+.terminal-button:hover {
+  background-color: #444;
+}
