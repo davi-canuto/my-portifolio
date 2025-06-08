@@ -1,28 +1,44 @@
 import { useState, useEffect, useRef } from 'react'
 import './Terminal.css'
+import descriptions from '../data/texts'
+
+const buttons = {
+  en: [
+    { label: 'About', cmds: ['cat about.txt'] },
+    { label: 'Skills', cmds: ['cat /skills/soft.txt', 'cat /skills/hard.txt'] },
+    { label: 'Projects', cmds: ['cat /projects/school-api.txt', 'cat /projects/booking-system.txt'] },
+    { label: 'Contact', cmds: ['cat contact.txt'] },
+  ],
+  pt: [
+    { label: 'Sobre', cmds: ['cat sobre.txt'] },
+    { label: 'Habilidades', cmds: ['cat /habilidades/pessoal.txt', 'cat /habilidades/tecnico.txt'] },
+    { label: 'Projetos', cmds: ['cat /projetos/api-escolar.txt', 'cat /projetos/sistema-reservas.txt'] },
+    { label: 'Contato', cmds: ['cat contato.txt'] },
+  ],
+}
 
 const fs = {
   en: {
     '/': ['skills', 'projects', 'about.txt', 'contact.txt'],
     '/projects': ['school-api.txt', 'booking-system.txt'],
     '/skills': ['soft.txt', 'hard.txt'],
-    'about.txt': "Hello! I'm Davi Canuto, a backend developer focused on REST APIs, Ruby on Rails, and testing.",
-    'contact.txt': "Email: davialessandro33@gmail.com\nLinkedIn: https://linkedin.com/in/davi-canuto-b10ab11b7\nGithub: https://github.com/davi-canuto",
-    '/skills/soft.txt': "tuémano",
-    '/skills/hard.txt': "Ruby, Rails, PostgreSQL, Docker, TDD, CI/CD",
-    '/projects/school-api.txt': "School API: RESTful API for managing school data. GitHub: https://github.com/seuusuario/api-escolar",
-    '/projects/booking-system.txt': "Booking System: Platform for resource reservations. GitHub: https://github.com/seuusuario/reservas",
+    'about.txt': descriptions.en.about,
+    'contact.txt': descriptions.en.contact,
+    '/skills/soft.txt': descriptions.en.skillsSoft,
+    '/skills/hard.txt': descriptions.en.skillsHard,
+    '/projects/school-api.txt': descriptions.en.schoolApi,
+    '/projects/booking-system.txt': descriptions.en.bookingSystem,
   },
   pt: {
-    '/': ['sobre.txt', 'habilidades.txt', 'projetos', 'contato.txt'],
+    '/': ['sobre.txt', 'habilidades', 'projetos', 'contato.txt'],
     '/projetos': ['api-escolar.txt', 'sistema-reservas.txt'],
-    '/habilidades': ['pessoals.txt', 'tecnico.txt'],
-    'sobre.txt': "Olá! Eu sou Davi Canuto, desenvolvedor backend focado em APIs REST, Ruby on Rails e testes.",
-    'contato.txt': "Email: davialessandro33@gmail.com\nLinkedIn: https://linkedin.com/in/davi-canuto-b10ab11b7",
-    '/habilidades/pessoal.txt': "tuémano",
-    '/habilidades/tecnico.txt': "Ruby, Rails, PostgreSQL, Docker, TDD, CI/CD",
-    '/projetos/api-escolar.txt': "API Escolar: API RESTful para gerenciamento escolar. GitHub: https://github.com/seuusuario/api-escolar",
-    '/projetos/sistema-reservas.txt': "Sistema de Reservas: Plataforma de reservas de recursos. GitHub: https://github.com/seuusuario/reservas"
+    '/habilidades': ['pessoal.txt', 'tecnico.txt'],
+    'sobre.txt': descriptions.pt.about,
+    'contato.txt': descriptions.pt.contact,
+    '/habilidades/pessoal.txt': descriptions.pt.skillsSoft,
+    '/habilidades/tecnico.txt': descriptions.pt.skillsHard,
+    '/projetos/api-escolar.txt': descriptions.pt.schoolApi,
+    '/projetos/sistema-reservas.txt': descriptions.pt.bookingSystem,
   }
 }
 
@@ -124,15 +140,22 @@ export default function Terminal() {
     }
   }
 
+  const runCommand = (cmd) => {
+    print(`$ ${cmd}`)
+    handleCommand(cmd)
+    setHistory((h) => {
+      const newHist = [...h, cmd]
+      setHistoryIndex(newHist.length)
+      return newHist
+    })
+  }
+
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       const cmd = command
       setCommand('')
       if (cmd) {
-        print(`$ ${cmd}`)
-        handleCommand(cmd)
-        setHistory([...history, cmd])
-        setHistoryIndex(history.length + 1)
+        runCommand(cmd)
       }
     } else if (event.key === 'ArrowUp') {
       if (historyIndex > 0) {
@@ -161,6 +184,17 @@ export default function Terminal() {
         <option value="en">🇺🇸 English</option>
         <option value="pt">🇧🇷 Português</option>
       </select>
+      <div className="button-panel">
+        {buttons[lang].map((b) => (
+          <button
+            key={b.label}
+            className="terminal-button"
+            onClick={() => b.cmds.forEach(runCommand)}
+          >
+            {b.label}
+          </button>
+        ))}
+      </div>
       <div id="output" className="output" ref={outputRef}>
         {output.map((line, idx) => (
           <div key={idx}>{line}</div>
