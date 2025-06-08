@@ -8,12 +8,14 @@ const buttons = {
     { label: 'Skills', cmds: ['cat /skills/soft.txt', 'cat /skills/hard.txt'] },
     { label: 'Projects', cmds: ['cat /projects/school-api.txt', 'cat /projects/booking-system.txt'] },
     { label: 'Contact', cmds: ['cat contact.txt'] },
+    { label: 'Clear Terminal', cmds: ['clear'] },
   ],
   pt: [
     { label: 'Sobre', cmds: ['cat sobre.txt'] },
     { label: 'Habilidades', cmds: ['cat /habilidades/pessoal.txt', 'cat /habilidades/tecnico.txt'] },
     { label: 'Projetos', cmds: ['cat /projetos/api-escolar.txt', 'cat /projetos/sistema-reservas.txt'] },
     { label: 'Contato', cmds: ['cat contato.txt'] },
+    { label: 'Limpar Terminal', cmds: ['clear'] },
   ],
 }
 
