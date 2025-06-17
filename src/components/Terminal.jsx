@@ -6,14 +6,22 @@ const buttons = {
   en: [
     { label: 'About', cmds: ['cat about.txt'] },
     { label: 'Skills', cmds: ['cat /skills/soft.txt', 'cat /skills/hard.txt'] },
-    { label: 'Projects', cmds: ['cat /projects/school-api.txt', 'cat /projects/booking-system.txt'] },
+    { label: 'Projects', cmds: [
+        'cat /projects/clicksign-ruby.txt',
+        'cat /projects/spotify-card.txt',
+        'cat /projects/notebook-api.txt'
+      ] },
     { label: 'Contact', cmds: ['cat contact.txt'] },
     { label: 'Clear Terminal', cmds: ['clear'] },
   ],
   pt: [
     { label: 'Sobre', cmds: ['cat sobre.txt'] },
     { label: 'Habilidades', cmds: ['cat /habilidades/pessoal.txt', 'cat /habilidades/tecnico.txt'] },
-    { label: 'Projetos', cmds: ['cat /projetos/api-escolar.txt', 'cat /projetos/sistema-reservas.txt'] },
+    { label: 'Projetos', cmds: [
+        'cat /projetos/clicksign-ruby.txt',
+        'cat /projetos/spotify-card.txt',
+        'cat /projetos/notebook-api.txt'
+      ] },
     { label: 'Contato', cmds: ['cat contato.txt'] },
     { label: 'Limpar Terminal', cmds: ['clear'] },
   ],
@@ -22,25 +30,35 @@ const buttons = {
 const fs = {
   en: {
     '/': ['skills', 'projects', 'about.txt', 'contact.txt'],
-    '/projects': ['school-api.txt', 'booking-system.txt'],
+    '/projects': [
+      'clicksign-ruby.txt',
+      'spotify-card.txt',
+      'notebook-api.txt'
+    ],
     '/skills': ['soft.txt', 'hard.txt'],
     'about.txt': descriptions.en.about,
     'contact.txt': descriptions.en.contact,
     '/skills/soft.txt': descriptions.en.skillsSoft,
     '/skills/hard.txt': descriptions.en.skillsHard,
-    '/projects/school-api.txt': descriptions.en.schoolApi,
-    '/projects/booking-system.txt': descriptions.en.bookingSystem,
+    '/projects/clicksign-ruby.txt': descriptions.en.clicksignRuby,
+    '/projects/spotify-card.txt': descriptions.en.spotifyCard,
+    '/projects/notebook-api.txt': descriptions.en.notebookApi,
   },
   pt: {
     '/': ['sobre.txt', 'habilidades', 'projetos', 'contato.txt'],
-    '/projetos': ['api-escolar.txt', 'sistema-reservas.txt'],
+    '/projetos': [
+      'clicksign-ruby.txt',
+      'spotify-card.txt',
+      'notebook-api.txt'
+    ],
     '/habilidades': ['pessoal.txt', 'tecnico.txt'],
     'sobre.txt': descriptions.pt.about,
     'contato.txt': descriptions.pt.contact,
     '/habilidades/pessoal.txt': descriptions.pt.skillsSoft,
     '/habilidades/tecnico.txt': descriptions.pt.skillsHard,
-    '/projetos/api-escolar.txt': descriptions.pt.schoolApi,
-    '/projetos/sistema-reservas.txt': descriptions.pt.bookingSystem,
+    '/projetos/clicksign-ruby.txt': descriptions.pt.clicksignRuby,
+    '/projetos/spotify-card.txt': descriptions.pt.spotifyCard,
+    '/projetos/notebook-api.txt': descriptions.pt.notebookApi,
   }
 }
 
